@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>2018년 제10차 개헌의 문재인 대통령 개헌안 비교 페이지</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.3.1/dist/semantic.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+  <style>
+    @import url(//fonts.googleapis.com/earlyaccess/notosanskr.css);
+
+    * {
+      font-family: 'Noto Sans KR', sans-serif;
+    }
+
+    p {
+      line-height: 1.7em;
+    }
+
+    a.anchor {
+      color: inherit;
+    }
+
+    #app {
+      margin: 40px 0 10px 0;
+    }
+
+    #header {
+      margin-bottom: 100px;
+    }
+
+    #footer {
+      margin-top: 100px;
+    }
+
+    .d-added {
+      background-color: #a6f3a6;
+    }
+
+    .d-deleted {
+      background-color: #f8cbcb;
+    }
+  </style>
+</head>
+<body>
+  <a href="https://github.com/devunt/10th-amendment"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
+  <div class="ui container" id="app">
+    <div class="ui center aligned basic segment" id="header">
+      <h2 class="ui icon header">
+        <i class="circular balance scale icon"></i>
+        2018년 제10차 개헌의<br>문재인 대통령 개헌안 비교
+      </h2>
+      <p>
+        2018년 3월 22일, 문재인 대통령은 2018년 10차 개헌의 대통령 개헌안 전문을 <a href="http://news.naver.com/main/read.nhn?mode=LS2D&mid=sec&sid1=100&sid2=269&oid=032&aid=0002859359">공개했습니다.</a><br>
+        본 페이지는 해당 대통령 개헌안 전문을 <a href="http://www.law.go.kr/lsEfInfoP.do?lsiSeq=61603">현행 현법</a>과 비교해 달라진 점을 보여줍니다.<br>
+      </p>
+      <p>
+        이 페이지는 완성본이 아니며, 앞으로의 진행 상황에 따라 계속 업데이트됩니다.<br>
+        각 칸의 굵은 글씨로 써져 있는 제목을 클릭하면 해당 조항으로 바로 이어지는 공유용 링크가 생성됩니다.
+      </p>
+      <div class="ui steps">
+        <div class="step">
+          <i class="hourglass start icon"></i>
+          <div class="content">
+            <div class="title">개헌 논의</div>
+            <div class="description">2016~</div>
+          </div>
+        </div>
+        <div class="active step">
+          <i class="bullhorn icon"></i>
+          <div class="content">
+            <div class="title">개헌안 발표</div>
+            <div class="description">2018.03.22</div>
+          </div>
+        </div>
+        <div class="disabled step">
+          <i class="comments outline icon"></i>
+          <div class="content">
+            <div class="title">국무회의 심의</div>
+            <div class="description">TBD</div>
+          </div>
+        </div>
+        <div class="disabled step">
+          <i class="building outline icon"></i>
+          <div class="content">
+            <div class="title">국회 의결</div>
+            <div class="description">TBD</div>
+          </div>
+        </div>
+        <div class="disabled step">
+          <i class="hand paper outline icon"></i>
+          <div class="content">
+            <div class="title">국민투표</div>
+            <div class="description">TBD</div>
+          </div>
+        </div>
+        <div class="disabled step">
+          <i class="check icon"></i>
+          <div class="content">
+            <div class="title">개정 완료</div>
+            <div class="description">TBD</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <table class="ui selectable padded very basic table">
+      <tbody>
+        <template v-for="changeset in data.changesets">
+          <tr class="middle aligned active" v-for="old_paragraph in changeset.old_paragraphs">
+            <td class="center aligned" colspan="3">
+              <component :is="'h' + old_paragraph.level" class="ui header">
+                <span class="d-deleted"><anchor :id="'op' + old_paragraph.id">-{{ old_paragraph.name }}</anchor></span>
+              </component>
+            </td>
+          </tr>
+          <tr class="middle aligned active" v-for="new_paragraph in changeset.new_paragraphs">
+            <td class="center aligned" colspan="3">
+              <component :is="'h' + new_paragraph.level" class="ui header">
+                <span class="d-added"><anchor :id="'np' + new_paragraph.id">+{{ new_paragraph.name }}</anchor></span>
+              </component>
+            </td>
+          </tr>
+          <tr class="middle aligned active" v-for="paragraph in changeset.paragraphs">
+            <td class="center aligned" colspan="3">
+              <component :is="'h' + paragraph.level" class="ui header">
+                <anchor :id="'np' + paragraph.id">{{ paragraph.name }}</anchor>
+              </component>
+            </td>
+          </tr>
+          <tr class="top aligned">
+            <td class="">
+              <div class="ui green ribbon label" v-if="changeset.status == 'added'">신설</div>
+              <div class="ui basic segment" v-for="old_article in changeset.old_articles">
+                <h3 class="ui header"><anchor :id="'o' + old_article.id">제{{ old_article.id }}조</anchor></h3>
+                <p class="d"><template v-for="diff in old_article.diffs"><diff :diff="diff"></diff>{{ ' ' }}</template></p>
+              </div>
+            </td>
+            <td class="middle aligned center aligned">
+              <i class="large plus square icon" v-if="changeset.status == 'added'"></i>
+              <i class="large minus square icon" v-if="changeset.status == 'deleted'"></i>
+              <i class="large caret square right icon" v-if="changeset.status == 'changed'"></i>
+            </td>
+            <td class="">
+              <div class="ui red right ribbon label" v-if="changeset.status == 'deleted'">삭제</div>
+              <div class="ui basic segment" v-for="new_article in changeset.new_articles">
+                <h3 class="ui header"><anchor :id="'n' + new_article.id">제{{ new_article.id }}조</anchor></h3>
+                <p class="d"><template v-for="diff in new_article.diffs"><diff :diff="diff"></diff>{{ ' ' }}</template></p>
+              </div>
+            </td>
+          </tr>
+        </template>
+
+        <tr class="middle aligned active">
+          <td colspan="3" class="center aligned">
+            <h2 class="ui header"><anchor :id="'pa'">부칙</anchor></h2>
+          </td>
+        </tr>
+        <tr class="middle aligned">
+          <td colspan="3" class="center aligned">
+            (추후 추가 예정)
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="ui center aligned basic segment" id="footer">
+      <script src="https://utteranc.es/client.js"
+            repo="devunt/10th-amendment"
+            branch="master"
+            issue-number="1"
+            async>
+      </script>
+    </div>
+
+    <div class="ui center aligned basic segment" id="footer">
+      2018 <a href="https://github.com/devunt">devunt</a>
+    </div>
+  </div>
+
+  <script>
+  new Vue({
+      el: '#app',
+      data: {
+        data: []
+      },
+      mounted: function () {
+          var self = this;
+          axios.get('data.json').then(function(response) {
+              self.data = response.data;
+          })
+      },
+      components: {
+          anchor: {
+              props: ['id'],
+              template: '<a class="anchor" :id="id" :href="\'#\' + id"><slot></slot></a>'
+          },
+          diff: {
+              props: ['diff'],
+              template: '<span :class="\'d-\' + diff.status" v-html="diff.phrase.replace(/\\n/g, \'<br>\')"></span>'
+          }
+      }
+  });
+  </script>
+</body>
+</html>
