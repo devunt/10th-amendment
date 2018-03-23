@@ -116,7 +116,7 @@ def generate_data_json():
                 old_attached_paragraphs += old_article.paragraphs
 
             for new_article in new_articles:
-                changeset['new_articles'].append({'id': new_article.id, 'diffs': [{'status': 'deleted', 'phrase': new_article.text}]})
+                changeset['new_articles'].append({'id': new_article.id, 'diffs': [{'status': 'added', 'phrase': new_article.text}]})
                 new_attached_paragraphs += new_article.paragraphs
 
             changeset.update(get_paragraphs(old_attached_paragraphs, new_attached_paragraphs))
